@@ -36,7 +36,6 @@ def operations():
     else:
         return "Error"
 
-
 @app.route('/entryLogs/')
 def entryLogs():
     countPayload = "";error = "";logs = []
