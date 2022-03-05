@@ -19,9 +19,9 @@ except:
 def hello():
     return render_template('index.html')
 
-@app.route('/about/')
-def about():
-    return render_template('about.html')
+@app.route('/operations/')
+def operations():
+    return render_template('operations.html')
 
 @app.route('/entryLogs/')
 def entryLogs():
