@@ -2,12 +2,14 @@ def runcam():
     import cv2, time, sqlite3, os
     detectTime = 0 ; detectLast = 0
     clearTrig = 3 #在未輸入幾秒重置計算張數
-    confirmTrig = 30 #20張圖就算成功
+    confirmTrig = 30 #30張圖就算成功
     start = time.time() #設置起始時間
+    #判斷imgs目錄是否存在
     if not os.path.exists(os.path.join(os.getcwd(), 'imgs')):
         os.mkdir("imgs")
         print("Created imgs Folder")
     cap = cv2.VideoCapture(0)
+    #判斷資料庫是否存在
     try:
         conn = sqlite3.connect('entry.db')
         c = conn.cursor()
@@ -22,7 +24,6 @@ def runcam():
         ret, frame = cap.read()
         if ret:
             frame = cv2.resize(frame, (0, 0), fx=1.2, fy=1.2)
-            #cv2.imread(frame)
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faceCascade = cv2.CascadeClassifier('face_detect.xml')
             faceRect = faceCascade.detectMultiScale(gray, 1.5, 3)
@@ -35,6 +36,7 @@ def runcam():
         else:
             break
         print(detectTime)
+        #確定有達到一定的辨識次數
         if detectTime > confirmTrig:
             print("座標: ",faceRect)
             nowTime = round(float(time.time()),4)
@@ -44,6 +46,7 @@ def runcam():
             detectTime = 0
             print("Got Your Face")
             start = time.time()
+        #輸入超時判斷&是否有持續輸入
         if time.time()-start > clearTrig and detectTime!=detectLast:
             print(time.time()-start)
             detectTime = 0
