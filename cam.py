@@ -1,9 +1,12 @@
 def runcam():
-    import cv2, time, sqlite3
+    import cv2, time, sqlite3, os
     detectTime = 0 ; detectLast = 0
     clearTrig = 3 #在未輸入幾秒重置計算張數
     confirmTrig = 30 #20張圖就算成功
     start = time.time() #設置起始時間
+    if not os.path.exists(os.path.join(os.getcwd(), 'imgs')):
+        os.mkdir("imgs")
+        print("Created imgs Folder")
     cap = cv2.VideoCapture(0)
     try:
         conn = sqlite3.connect('entry.db')

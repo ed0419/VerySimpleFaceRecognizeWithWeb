@@ -1,19 +1,19 @@
-from flask import Flask, render_template, request
 import sqlite3,time,shutil,os
-
+from flask import Flask, render_template, request
 app = Flask(__name__,static_folder='imgs/')
-
-try:
-    conn = sqlite3.connect('entry.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS logs
-        (ID INTEGER PRIMARY KEY     AUTOINCREMENT,
-        TIME           TEXT    NOT NULL);''')
-    print ("Successful")
-    conn.commit()
-    conn.close()
-except:
-    print("Cannot Conect To Sqlite3 DB")
+def check():
+    try:
+        os.mkdir("imgs")
+        conn = sqlite3.connect('entry.db')
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS logs
+            (ID INTEGER PRIMARY KEY     AUTOINCREMENT,
+            TIME           TEXT    NOT NULL);''')
+        print ("Successful")
+        conn.commit()
+        conn.close()
+    except:
+        print("Cannot Conect To Sqlite3 DB")
 
 @app.route('/')
 def hello():
@@ -40,6 +40,7 @@ def operations():
 @app.route('/entryLogs/')
 def entryLogs():
     countPayload = "";error = "";logs = []
+    check()
     try:
         conn = sqlite3.connect('entry.db')
         c = conn.cursor()
@@ -55,7 +56,7 @@ def entryLogs():
         if len(logs) == 0:
             error = f'<font size=5 color="red">目前沒有資料</font><br><p>現在時間 : {time.ctime()}</p>'
     except:
-        error = "Cannot find Sqlite DB"
+        error = "Cannot find Sqlite DB or No DATA"
         print(error)
     return render_template('entryLogs.html', logs=logs, countPayload = countPayload, error=error)
 
