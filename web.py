@@ -1,5 +1,5 @@
-from flask import Flask, render_template
-import sqlite3,time
+from flask import Flask, render_template, request
+import sqlite3,time,shutil,os
 
 app = Flask(__name__,static_folder='imgs/')
 
@@ -19,9 +19,23 @@ except:
 def hello():
     return render_template('index.html')
 
-@app.route('/operations/')
+@app.route('/operations/',methods=["POST","GET"])
 def operations():
-    return render_template('operations.html')
+    if request.method == "POST":
+        try:
+            shutil.rmtree("imgs")
+            os.remove("entry.db")
+        except OSError as e:
+            message = e
+        else:
+            message = "成功刪除"
+        print(message)
+        return f'<script>alert("{message}")</script><meta http-equiv="refresh" content="0; url="../../operations">'
+    if request.method == "GET":
+        return render_template('operations.html')
+    else:
+        return "Error"
+
 
 @app.route('/entryLogs/')
 def entryLogs():
